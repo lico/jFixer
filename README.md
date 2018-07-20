@@ -2,12 +2,14 @@
 Java API for the Exchange Rates Fixer.io service
 
 
+
 ## Getting started
 See the wiki pages for usage guidelines:
 https://github.com/lico/jFixer/wiki
 
 
-### Install
+
+## Install
 You can compile the API in Maven.
 This will produce two jar files : with and without the dependencies.
 
