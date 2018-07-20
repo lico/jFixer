@@ -1,6 +1,6 @@
 # jFixer
 Java API for the Exchange Rates Fixer.io service
-
+See https://fixer.io/ for documentation about this service
 
 
 ## Getting started
