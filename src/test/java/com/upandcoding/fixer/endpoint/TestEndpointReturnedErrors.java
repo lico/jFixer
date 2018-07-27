@@ -74,6 +74,28 @@ public class TestEndpointReturnedErrors {
 		}
 	}
 
+	// Invalid access kwy
+	@Test
+	public void testGetError101() throws FixerException, ClientProtocolException, IOException {
+
+		// Mock the JSON response
+		String jsonStr = "{\"success\":false,\"error\":{\"code\":101,\"type\":\"invalid_access_key\"}}";
+
+		// Setup Wire Mock HTTP server
+		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + TestConfig.baseCurrency;
+		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
+
+		// Prepare endpoint
+		try {
+			EndpointFieldList data = latestEndpoint.getData();
+		} catch (FixerException fe) {
+			log.debug("Json: {}", latestEndpoint.getJsonResponse());
+			Assert.assertEquals(101, fe.getFixerCode());
+			Assert.assertEquals("invalid_access_key", fe.getFixerType());
+			Assert.assertEquals("invalid_access_key", fe.getLocalizedMessage());
+		}
+	}
+	
 	@Test
 	public void testGetError105() throws FixerException, ClientProtocolException, IOException {
 
@@ -120,7 +142,7 @@ public class TestEndpointReturnedErrors {
 		}
 	}
 
-	@Test
+	@Test (expected = JsonParseException.class)
 	public void testGetErrorNotJsonFormat() throws FixerException, ClientProtocolException, IOException {
 
 		// Mock the JSON response
@@ -129,14 +151,7 @@ public class TestEndpointReturnedErrors {
 		// Setup Wire Mock HTTP server
 		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + TestConfig.baseCurrency;
 		TestUtils.setupMockHttpServerErrorHtml(TestConfig.baseUrl, endpointUrl, jsonStr);
-
-		try {
-			EndpointFieldList data = latestEndpoint.getData();
-			Assert.assertTrue(false);
-		} catch (JsonParseException fe) {
-			String expected = "Unexpected character ('<' (code 60)): expected a valid value (number, String, array, object, 'true', 'false' or 'null')\n at [Source: (sun.net.www.protocol.http.HttpURLConnection$HttpInputStream); line: 1, column: 2]";
-			Assert.assertEquals(expected, fe.getLocalizedMessage());
-		}
+		EndpointFieldList data = latestEndpoint.getData();
 	}
 
 	@Test
@@ -149,8 +164,8 @@ public class TestEndpointReturnedErrors {
 		try {
 			EndpointFieldList data = latestEndpoint.getData();
 			Assert.assertTrue(false);
-		} catch (FileNotFoundException fe) {
-			Assert.assertEquals(TestConfig.baseUrl + endpointUrl, fe.getLocalizedMessage());
+		} catch (FixerException fe) {
+			Assert.assertEquals("ERROR: '404 Not Found' when loading URL: " + TestConfig.baseUrl + endpointUrl, fe.getLocalizedMessage());
 		}
 	}
 
@@ -164,8 +179,8 @@ public class TestEndpointReturnedErrors {
 		try {
 			EndpointFieldList data = latestEndpoint.getData();
 			Assert.assertTrue(false);
-		} catch (IOException fe) {
-			String expected = "Server returned HTTP response code: 500 for URL: " + TestConfig.baseUrl + endpointUrl;
+		} catch (FixerException fe) {
+			String expected = "ERROR: '500 Server Error' when loading URL: " + TestConfig.baseUrl + endpointUrl;
 			Assert.assertEquals(expected, fe.getLocalizedMessage());
 		}
 	}

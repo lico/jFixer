@@ -69,7 +69,7 @@ public class TestLoaderReturnedErrors {
 
 	}
 
-	@Test
+	@Test(expected = JsonParseException.class)
 	public void testGetErrorNotJsonFormat() throws FixerException, ClientProtocolException, IOException {
 
 		// Mock the JSON response
@@ -80,12 +80,7 @@ public class TestLoaderReturnedErrors {
 		TestUtils.setupMockHttpServerErrorHtml(TestConfig.baseUrl, endpointUrl, jsonStr);
 
 		FixerApiLoader fixerApiLoader = new FixerApiLoader(TestConfig.baseUrl, TestConfig.accessKey, TestConfig.baseCurrency);
-		try {
-			List<ExchangeRate> exchangeRates = fixerApiLoader.getLatest();
-		} catch (JsonParseException fe) {
-			String expected = "Unexpected character ('<' (code 60)): expected a valid value (number, String, array, object, 'true', 'false' or 'null')\n at [Source: (sun.net.www.protocol.http.HttpURLConnection$HttpInputStream); line: 1, column: 2]";
-			Assert.assertEquals(expected, fe.getLocalizedMessage());
-		}
+		List<ExchangeRate> exchangeRates = fixerApiLoader.getLatest();
 	}
 
 	@Test
@@ -98,8 +93,10 @@ public class TestLoaderReturnedErrors {
 		FixerApiLoader fixerApiLoader = new FixerApiLoader(TestConfig.baseUrl, TestConfig.accessKey, TestConfig.baseCurrency);
 		try {
 			List<ExchangeRate> exchangeRates = fixerApiLoader.getLatest();
-		} catch (FileNotFoundException fe) {
-			Assert.assertEquals(TestConfig.baseUrl + endpointUrl, fe.getLocalizedMessage());
+			Assert.assertTrue(false);
+		} catch (FixerException fe) {
+			log.debug(fe.getLocalizedMessage());
+			Assert.assertEquals("ERROR: '404 Not Found' when loading URL: " + TestConfig.baseUrl + endpointUrl, fe.getLocalizedMessage());
 		}
 	}
 
@@ -113,8 +110,9 @@ public class TestLoaderReturnedErrors {
 		FixerApiLoader fixerApiLoader = new FixerApiLoader(TestConfig.baseUrl, TestConfig.accessKey, TestConfig.baseCurrency);
 		try {
 			List<ExchangeRate> exchangeRates = fixerApiLoader.getLatest();
-		} catch (IOException fe) {
-			String expected = "Server returned HTTP response code: 500 for URL: " + TestConfig.baseUrl + endpointUrl;
+			Assert.assertTrue(false);
+		} catch (FixerException fe) {
+			String expected = "ERROR: '500 Server Error' when loading URL: " + TestConfig.baseUrl + endpointUrl;
 			Assert.assertEquals(expected, fe.getLocalizedMessage());
 		}
 	}

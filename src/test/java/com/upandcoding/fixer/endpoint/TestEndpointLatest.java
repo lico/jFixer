@@ -16,9 +16,9 @@
 package com.upandcoding.fixer.endpoint;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.upandcoding.fixer.FixerApiLoader;
 import com.upandcoding.fixer.FixerException;
 import com.upandcoding.fixer.endpoint.field.EndpointFieldList;
 import com.upandcoding.fixer.model.ExchangeRate;
@@ -50,10 +49,14 @@ public class TestEndpointLatest {
 
 		String baseCurrency = "USD";
 		
+		LocalDateTime now = LocalDateTime.now();
+		ZonedDateTime zdt = now.atZone(ZoneId.systemDefault());
+		long millis = zdt.toInstant().getEpochSecond();
+		
 		// Mock the JSON response
 		String jsonStr = "{"
 				+ "\"success\": true,"
-				+ "\"timestamp\": 1519296206,"
+				+ "\"timestamp\": " + millis + ","
 				+ "\"base\": \"USD\","
 				+ "\"date\": \"2018-07-10\","
 				+ "\"rates\": {"
@@ -78,12 +81,18 @@ public class TestEndpointLatest {
 		
 		List<ExchangeRate> rates = data.getRates();
 		List<ExchangeRate> expected = new ArrayList<>();
-		LocalDateTime ld = LocalDateTime.ofInstant(Instant.ofEpochSecond(1519296206), ZoneId.systemDefault());
-		expected.add(new ExchangeRate(baseCurrency,"GBP", 0.72007, "2018-07-10", ld));
-		expected.add(new ExchangeRate(baseCurrency,"JPY", 107.346001, "2018-07-10",ld));
-		expected.add(new ExchangeRate(baseCurrency,"EUR", 0.813399, "2018-07-10",ld));
+		expected.add(new ExchangeRate(baseCurrency,"GBP", 0.72007, "2018-07-10", now));
+		expected.add(new ExchangeRate(baseCurrency,"JPY", 107.346001, "2018-07-10",now));
+		expected.add(new ExchangeRate(baseCurrency,"EUR", 0.813399, "2018-07-10",now));
 		Assert.assertEquals(expected, rates);
 
+		log.debug("millis: {}", millis);
+		if (rates!=null && !rates.isEmpty()) {
+			ExchangeRate rate = rates.get(0);
+			LocalDateTime ld = rate.getTimestamp();
+			long actualMillis = ld.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond();
+			Assert.assertEquals(millis, actualMillis);  
+		}
 	}
 
 }

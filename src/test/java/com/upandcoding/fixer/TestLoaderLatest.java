@@ -46,24 +46,17 @@ public class TestLoaderLatest {
 
 	@Test
 	public void testGetLatest() throws FixerException, ClientProtocolException, IOException {
-		
+
 		String baseCurrency = "USD";
-		
+
 		// Mock the JSON response
-		String jsonStr = "{"
-				+ "\"success\": true,"
-				+ "\"timestamp\": 1519296206,"
-				+ "\"base\": \"USD\","
-				+ "\"date\": \"2018-07-10\","
-				+ "\"rates\": {"
-				+ "\"GBP\": 0.72007,"
-				+ "\"JPY\": 107.346001,"
-				+ "\"EUR\": 0.813399"
-				+ "}"
-				+ "}";
+		String jsonStr = "{" + "\"success\": true," + "\"timestamp\": 1531958399," + "\"base\": \"USD\","
+				+ "\"date\": \"2018-07-10\"," + "\"rates\": {" + "\"GBP\": 0.72007," + "\"JPY\": 107.346001,"
+				+ "\"EUR\": 0.813399" + "}" + "}";
 
 		// Setup Wire Mock HTTP server
-		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + baseCurrency + "&symbols=GBP,JPY,EUR";
+		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + baseCurrency
+				+ "&symbols=GBP,JPY,EUR";
 		log.debug("BaseURL: {} ::  url: {}", TestConfig.baseUrl, endpointUrl);
 		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
 
@@ -71,66 +64,56 @@ public class TestLoaderLatest {
 		List<ExchangeRate> rates = fixerApiLoader.getLatest("GBP,JPY,EUR");
 		List<ExchangeRate> expected = new ArrayList<>();
 		LocalDateTime ld = LocalDateTime.ofInstant(Instant.ofEpochSecond(1519296206), ZoneId.systemDefault());
-		expected.add(new ExchangeRate(baseCurrency,"GBP", 0.72007, "2018-07-10", ld));
-		expected.add(new ExchangeRate(baseCurrency,"JPY", 107.346001, "2018-07-10",ld));
-		expected.add(new ExchangeRate(baseCurrency,"EUR", 0.813399, "2018-07-10",ld));
+		expected.add(new ExchangeRate(baseCurrency, "GBP", 0.72007, "2018-07-10", ld));
+		expected.add(new ExchangeRate(baseCurrency, "JPY", 107.346001, "2018-07-10", ld));
+		expected.add(new ExchangeRate(baseCurrency, "EUR", 0.813399, "2018-07-10", ld));
 		Assert.assertEquals(expected, rates);
+
+		if (rates != null && !rates.isEmpty()) {
+			ExchangeRate rate = rates.get(0);
+			LocalDateTime ld2 = rate.getTimestamp();
+			log.debug("Timestamp: {}", ld2);
+		}
 	}
-	
+
 	@Test
 	public void testGetLatest2() throws FixerException, ClientProtocolException, IOException {
-		
+
 		String baseCurrency = "USD";
-		
+
 		// Mock the JSON response
-		String jsonStr = "{"
-				+ "\"success\": true,"
-				+ "\"timestamp\": 1519296206,"
-				+ "\"base\": \"USD\","
-				+ "\"date\": \"2018-07-10\","
-				+ "\"rates\": {"
-				+ "\"GBP\": 0.72007,"
-				+ "\"JPY\": 107.346001,"
-				+ "\"EUR\": 0.813399"
-				+ "}"
-				+ "}";
+		String jsonStr = "{" + "\"success\": true," + "\"timestamp\": 1519296206," + "\"base\": \"USD\","
+				+ "\"date\": \"2018-07-10\"," + "\"rates\": {" + "\"GBP\": 0.72007," + "\"JPY\": 107.346001,"
+				+ "\"EUR\": 0.813399" + "}" + "}";
 
 		// Setup Wire Mock HTTP server
-		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + baseCurrency  + "&symbols=JPY,EUR,GBP";
+		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + baseCurrency
+				+ "&symbols=JPY,EUR,GBP";
 		log.debug("BaseURL: {} ::  url: {}", TestConfig.baseUrl, endpointUrl);
 		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
-		
 
-		String[] currencies = {"GBP", "JPY", "EUR"};
-		
+		String[] currencies = { "GBP", "JPY", "EUR" };
+
 		FixerApiLoader fixerApiLoader = new FixerApiLoader(TestConfig.baseUrl, TestConfig.accessKey, baseCurrency);
-		//System.exit(0);
+		// System.exit(0);
 		List<ExchangeRate> rates = fixerApiLoader.getLatest(new HashSet<String>(Arrays.asList(currencies)));
 		List<ExchangeRate> expected = new ArrayList<>();
 		LocalDateTime ld = LocalDateTime.ofInstant(Instant.ofEpochSecond(1519296206), ZoneId.systemDefault());
-		expected.add(new ExchangeRate(baseCurrency,"GBP", 0.72007, "2018-07-10", ld));
-		expected.add(new ExchangeRate(baseCurrency,"JPY", 107.346001, "2018-07-10",ld));
-		expected.add(new ExchangeRate(baseCurrency,"EUR", 0.813399, "2018-07-10",ld));
+		expected.add(new ExchangeRate(baseCurrency, "GBP", 0.72007, "2018-07-10", ld));
+		expected.add(new ExchangeRate(baseCurrency, "JPY", 107.346001, "2018-07-10", ld));
+		expected.add(new ExchangeRate(baseCurrency, "EUR", 0.813399, "2018-07-10", ld));
 		Assert.assertEquals(expected, rates);
 	}
-	
+
 	@Test
 	public void testGetLatest3() throws FixerException, ClientProtocolException, IOException {
-		
+
 		String baseCurrency = "USD";
-		
+
 		// Mock the JSON response
-		String jsonStr = "{"
-				+ "\"success\": true,"
-				+ "\"timestamp\": 1519296206,"
-				+ "\"base\": \"USD\","
-				+ "\"date\": \"2018-07-10\","
-				+ "\"rates\": {"
-				+ "\"GBP\": 0.72007,"
-				+ "\"JPY\": 107.346001,"
-				+ "\"EUR\": 0.813399"
-				+ "}"
-				+ "}";
+		String jsonStr = "{" + "\"success\": true," + "\"timestamp\": 1519296206," + "\"base\": \"USD\","
+				+ "\"date\": \"2018-07-10\"," + "\"rates\": {" + "\"GBP\": 0.72007," + "\"JPY\": 107.346001,"
+				+ "\"EUR\": 0.813399" + "}" + "}";
 
 		// Setup Wire Mock HTTP server
 		String endpointUrl = "/latest?access_key=" + TestConfig.accessKey + "&base=" + baseCurrency;
@@ -141,9 +124,9 @@ public class TestLoaderLatest {
 		List<ExchangeRate> rates = fixerApiLoader.getLatest();
 		List<ExchangeRate> expected = new ArrayList<>();
 		LocalDateTime ld = LocalDateTime.ofInstant(Instant.ofEpochSecond(1519296206), ZoneId.systemDefault());
-		expected.add(new ExchangeRate(baseCurrency,"GBP", 0.72007, "2018-07-10", ld));
-		expected.add(new ExchangeRate(baseCurrency,"JPY", 107.346001, "2018-07-10",ld));
-		expected.add(new ExchangeRate(baseCurrency,"EUR", 0.813399, "2018-07-10",ld));
+		expected.add(new ExchangeRate(baseCurrency, "GBP", 0.72007, "2018-07-10", ld));
+		expected.add(new ExchangeRate(baseCurrency, "JPY", 107.346001, "2018-07-10", ld));
+		expected.add(new ExchangeRate(baseCurrency, "EUR", 0.813399, "2018-07-10", ld));
 		Assert.assertEquals(expected, rates);
 
 	}
