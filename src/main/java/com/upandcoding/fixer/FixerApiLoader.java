@@ -345,7 +345,7 @@ public class FixerApiLoader {
 	 */
 	public double getConversion(String fromCurrency, String targetCurrency, double amount)
 			throws FixerException, JsonParseException, IOException {
-		return getConversion(fromCurrency, targetCurrency, amount, baseCurrency);
+		return getConversion(fromCurrency, targetCurrency, amount, null);
 	}
 
 	/**
@@ -357,7 +357,7 @@ public class FixerApiLoader {
 	 *            is the target currency
 	 * @param amount
 	 *            a double that represents the initial value in the fromCurrency
-	 * @param currency
+	 * @param date
 	 *            an alternate base currency
 	 * 
 	 * @return the value in the targetCurrency
@@ -369,13 +369,8 @@ public class FixerApiLoader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public double getConversion(String fromCurrency, String targetCurrency, double amount, String currency)
+	public double getConversion(String fromCurrency, String targetCurrency, double amount, String date)
 			throws FixerException, JsonParseException, IOException {
-
-		// Base Currency
-		if (StringUtils.isBlank(currency)) {
-			currency = baseCurrency;
-		}
 
 		Endpoint convertEndpoint = new ConvertEndpoint(baseUrl);
 		convertEndpoint.addParam("access_key", accessKey);
@@ -383,6 +378,9 @@ public class FixerApiLoader {
 		convertEndpoint.addParam("from", fromCurrency);
 		convertEndpoint.addParam("to", targetCurrency);
 		convertEndpoint.addParam("amount", "" + amount);
+		if (StringUtils.isNotBlank(date)) {
+			convertEndpoint.addParam("date", date);
+		}
 
 		try {
 			EndpointFieldList data = convertEndpoint.getData();
