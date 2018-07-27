@@ -475,6 +475,7 @@ public class FixerApiLoader {
 		timeSeriesEndpoint.addParam("access_key", accessKey);
 		timeSeriesEndpoint.addParam("start_date", startDate);
 		timeSeriesEndpoint.addParam("end_date", endDate);
+		timeSeriesEndpoint.addParam("symbols", symbols);
 		timeSeriesEndpoint.addParam("base", currency);
 
 		try {

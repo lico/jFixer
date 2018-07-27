@@ -74,7 +74,7 @@ public class TestLoaderTimeSeries {
 		// Setup Wire Mock HTTP server
 		String startDate = "2012-05-01";
 		String endDate = "2012-05-03";
-		String endpointUrl = "/timeseries?access_key=" + TestConfig.accessKey + "&start_date=" + startDate + "&end_date=" + endDate + "&base=" + TestConfig.baseCurrency;
+		String endpointUrl = "/timeseries?access_key=" + TestConfig.accessKey + "&start_date=" + startDate + "&end_date=" + endDate + "&symbols=USD,AUD,CAD&base=" + TestConfig.baseCurrency;
 		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
 
 		log.debug("URL: " + endpointUrl);
@@ -110,19 +110,13 @@ public class TestLoaderTimeSeries {
 				+ "\"base\": \"EUR\","
 				+ "\"rates\": {"
 				+ "\"2012-05-01\":{"
-				+ "\"USD\": 1.322891,"
-				+ "\"AUD\": 1.278047,"
-				+ "\"CAD\": 1.302303"
+				+ "\"USD\": 1.322891"
 				+ "},"
 				+ "\"2012-05-02\": {"
-				+ "\"USD\": 1.315066,"
-				+ "\"AUD\": 1.274202,"
-				+ "\"CAD\": 1.299083"
+				+ "\"USD\": 1.315066"
 				+ "},"
 				+ "\"2012-05-03\": {"
-				+ "\"USD\": 1.314491,"
-				+ "\"AUD\": 1.280135,"
-				+ "\"CAD\": 1.296868"
+				+ "\"USD\": 1.314491"
 				+ "}"
 				+ "}"
 				+ "}";
@@ -130,7 +124,7 @@ public class TestLoaderTimeSeries {
 		// Setup Wire Mock HTTP server
 		String startDate = "2012-05-01";
 		String endDate = "2012-05-03";
-		String endpointUrl = "/timeseries?access_key=" + TestConfig.accessKey + "&start_date=" + startDate + "&end_date=" + endDate + "&base=" + TestConfig.baseCurrency;
+		String endpointUrl = "/timeseries?access_key=" + TestConfig.accessKey + "&start_date=" + startDate + "&end_date=" + endDate + "&symbols=USD&base=" + TestConfig.baseCurrency;
 		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
 
 		log.debug("URL: " + endpointUrl);
@@ -139,9 +133,7 @@ public class TestLoaderTimeSeries {
 		List<ExchangeRate> expected = new ArrayList<>();
 		LocalDateTime ld = LocalDateTime.ofInstant(Instant.ofEpochSecond(1519296206), ZoneId.systemDefault());
 		expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.322891, "2012-05-01", ld));
-
 		expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.315066, "2012-05-02", ld));
-
 		expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.314491, "2012-05-03", ld));
 		Assert.assertEquals(expected, rates);
 
