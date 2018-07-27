@@ -61,11 +61,11 @@ public class TestLoaderConvert {
 		double amount = 25.0;
 
 		// Setup Wire Mock HTTP server
-		String endpointUrl = "/convert?access_key=" + TestConfig.accessKey + "&base=" + TestConfig.baseCurrency + "&from=" + from + "&to=" + to + "&amount=" + amount;
+		String endpointUrl = "/convert?access_key=" + TestConfig.accessKey + "&base=" + TestConfig.baseCurrency + "&from=" + from + "&to=" + to + "&amount=" + amount +"&date=2018-02-22";
 		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
 
 		FixerApiLoader fixerApiLoader = new FixerApiLoader(TestConfig.baseUrl, TestConfig.accessKey, TestConfig.baseCurrency);
-		double result = fixerApiLoader.getConversion(from, to, amount);
+		double result = fixerApiLoader.getConversion(from, to, amount, "2018-02-22");
 		Assert.assertEquals(3724.305775, result);
 
 	}

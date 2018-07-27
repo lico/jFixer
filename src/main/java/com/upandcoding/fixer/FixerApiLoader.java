@@ -378,9 +378,11 @@ public class FixerApiLoader {
 		convertEndpoint.addParam("from", fromCurrency);
 		convertEndpoint.addParam("to", targetCurrency);
 		convertEndpoint.addParam("amount", "" + amount);
-		if (StringUtils.isNotBlank(date)) {
-			convertEndpoint.addParam("date", date);
-		}
+		if (StringUtils.isBlank(date)) {
+			LocalDate now = LocalDate.now();
+			date = EndpointField.dateFormatter.format(now);
+		} 
+		convertEndpoint.addParam("date", date);
 
 		try {
 			EndpointFieldList data = convertEndpoint.getData();
