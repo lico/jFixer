@@ -394,6 +394,30 @@ public class FixerApiLoader {
 	}
 
 	/**
+	 * Returns a list of historical exchange rates for a date and all available
+	 * currencies.
+	 * <p>
+	 * This method calls the Latest Rates Endpoint of the
+	 * <a href="https://fixer.io/">Fixer API</a>.
+	 * 
+	 * @param date
+	 *            the date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @return List of ExchangeRate objects
+	 * 
+	 * @See ExchangeRate
+	 * @See <a href="https://fixer.io/documentation#historicalrates">Historical
+	 *      Rates Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public List<ExchangeRate> getHistorical(String date) throws FixerException, JsonParseException, IOException {
+		return getHistorical(date, null, null);
+	}
+
+	/**
 	 * Returns a list of historical exchange rates for the list of currencies. If
 	 * this list is null, exchange rates are returned for all available currencies.
 	 * <p>
@@ -481,6 +505,31 @@ public class FixerApiLoader {
 	}
 
 	/**
+	 * Returns a list of historical exchange rates for a date and all available
+	 * currencies.
+	 * <p>
+	 * This method calls the Latest Rates Endpoint of the
+	 * <a href="https://fixer.io/">Fixer API</a>.
+	 * 
+	 * @param date
+	 *            a valid local date
+	 * @param symbols
+	 *            a list of valid ISO currency symbols
+	 * @return List of ExchangeRate objects
+	 * 
+	 * @See ExchangeRate
+	 * @See <a href="https://fixer.io/documentation#historicalrates">Historical
+	 *      Rates Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public List<ExchangeRate> getHistorical(LocalDate date) throws FixerException, JsonParseException, IOException {
+		return getHistorical(date, null, null);
+	}
+
+	/**
 	 * Returns a list of historical exchange rates for the list of currencies. If
 	 * this list is null, exchange rates are returned for all available currencies.
 	 * <p>
@@ -505,7 +554,7 @@ public class FixerApiLoader {
 			throws FixerException, JsonParseException, IOException {
 		return getHistorical(date, symbols, null);
 	}
-	
+
 	/**
 	 * Returns a list of historical exchange rates for the list of currencies. If
 	 * this list is null, exchange rates are returned for all available currencies.
@@ -518,7 +567,7 @@ public class FixerApiLoader {
 	 * @param symbols
 	 *            a list of valid ISO currency symbols
 	 * @param currency
-	 * 			 a specific base currency
+	 *            a specific base currency
 	 * @return List of ExchangeRate objects
 	 * 
 	 * @See ExchangeRate
