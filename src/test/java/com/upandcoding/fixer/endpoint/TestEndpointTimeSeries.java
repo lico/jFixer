@@ -46,7 +46,7 @@ public class TestEndpointTimeSeries {
 	public WireMockRule wireMockRule = new WireMockRule(7079);
 
 	@Test
-	public void testGetDataTimeSeries() throws FixerException, ClientProtocolException, IOException {
+	public void testGetDataTimeSeries1() throws FixerException, ClientProtocolException, IOException {
 
 		// Mock the JSON response
 		String jsonStr = "{"
@@ -104,6 +104,62 @@ public class TestEndpointTimeSeries {
 			expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.314491, "2012-05-03", ld));
 			expected.add(new ExchangeRate(TestConfig.baseCurrency, "AUD", 1.280135, "2012-05-03", ld));
 			expected.add(new ExchangeRate(TestConfig.baseCurrency, "CAD", 1.296868, "2012-05-03", ld));
+			Assert.assertEquals(expected, rates);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@Test
+	public void testGetDataTimeSeries2() throws FixerException, ClientProtocolException, IOException {
+
+		// Mock the JSON response
+		String jsonStr = "{"
+				+ "\"success\": true,"
+				+ "\"timeseries\": true,"
+				+ "\"start_date\": \"2012-05-01\","
+				+ "\"end_date\": \"2012-05-03\","
+				+ "\"base\": \"EUR\","
+				+ "\"rates\": {"
+				+ "\"2012-05-01\":{"
+				+ "\"USD\": 1.322891"
+				+ "},"
+				+ "\"2012-05-02\": {"
+				+ "\"USD\": 1.315066"
+				+ "},"
+				+ "\"2012-05-03\": {"
+				+ "\"USD\": 1.314491"
+				+ "}"
+				+ "}"
+				+ "}";
+
+		// Setup Wire Mock HTTP server
+		String startDate = "2012-05-01";
+		String endDate = "2012-05-03";
+		String endpointUrl = "/timeseries?access_key=" + TestConfig.accessKey + "&start_date=" + startDate + "&end_date=" + endDate + "&symbols=USD" + "&base=" + TestConfig.baseCurrency;
+		TestUtils.setupMockHttpServer(TestConfig.baseUrl, endpointUrl, jsonStr);
+
+		// With optional parameters
+		Endpoint timeSeries = new TimeSeriesEndpoint(TestConfig.baseUrl);
+		timeSeries.addParam("access_key", TestConfig.accessKey);
+		timeSeries.addParam("start_date", startDate);
+		timeSeries.addParam("end_date", endDate);
+		timeSeries.addParam("symbols", "USD");
+		timeSeries.addParam("base", TestConfig.baseCurrency);
+		try {
+			EndpointFieldList data = timeSeries.getData();
+			TestUtils.displayResult(data, log);
+			
+			List<ExchangeRate> rates = data.getRates();
+			List<ExchangeRate> expected = new ArrayList<>();
+			LocalDateTime ld = LocalDateTime.ofInstant(Instant.ofEpochSecond(1519296206), ZoneId.systemDefault());
+			expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.322891, "2012-05-01", ld));
+
+			expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.315066, "2012-05-02", ld));
+
+			expected.add(new ExchangeRate(TestConfig.baseCurrency, "USD", 1.314491, "2012-05-03", ld));
 			Assert.assertEquals(expected, rates);
 
 		} catch (IOException e) {
