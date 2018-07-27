@@ -142,7 +142,59 @@ public class FixerApiLoader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
+	public List<Fluctuation> getFluctuations(String startDate, String endDate)
+			throws FixerException, JsonParseException, IOException {
+		return getFluctuations(startDate, endDate, null, baseCurrency);
+	}
+
+	/**
+	 * Fluctuations of a currency between two dates. Returns the rate at beginning
+	 * and at end of the period plus the variation in value and in percentage
+	 * 
+	 * @param startDate
+	 *            the start date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param endDate
+	 *            the end date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
+	 * 
+	 * @See <a href="https://fixer.io/documentation#fluctuation">Fluctuation
+	 *      Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
 	public List<Fluctuation> getFluctuations(String startDate, String endDate, String symbols)
+			throws FixerException, JsonParseException, IOException {
+		return getFluctuations(startDate, endDate, symbols, baseCurrency);
+	}
+
+	/**
+	 * Fluctuations of a currency between two dates. Returns the rate at beginning
+	 * and at end of the period plus the variation in value and in percentage
+	 * 
+	 * @param startDate
+	 *            the start date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param endDate
+	 *            the end date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
+	 * @param currency
+	 *            an alternate base currency
+	 * 
+	 * @See <a href="https://fixer.io/documentation#fluctuation">Fluctuation
+	 *      Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public List<Fluctuation> getFluctuations(String startDate, String endDate, String symbols, String currency)
 			throws FixerException, JsonParseException, IOException {
 
 		// Check Dates
@@ -156,10 +208,15 @@ public class FixerApiLoader {
 			throw new FixerException("Invalid or null date");
 		}
 
+		// Base Currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
+		}
+
 		// Calculates
 		Endpoint fluctuationEndpoint = new FluctuationEndpoint(baseUrl);
 		fluctuationEndpoint.addParam("access_key", accessKey);
-		fluctuationEndpoint.addParam("base", baseCurrency);
+		fluctuationEndpoint.addParam("base", currency);
 		fluctuationEndpoint.addParam("start_date", startDate);
 		fluctuationEndpoint.addParam("end_date", endDate);
 		fluctuationEndpoint.addParam("symbols", symbols);
@@ -194,7 +251,55 @@ public class FixerApiLoader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
+	public List<Fluctuation> getFluctuations(LocalDate startDate, LocalDate endDate)
+			throws FixerException, JsonParseException, IOException {
+		return getFluctuations(startDate, endDate, null, baseCurrency);
+	}
+
+	/**
+	 * Fluctuations of a currency between two dates. Returns the rate at beginning
+	 * and at end of the period plus the variation in value and in percentage
+	 * 
+	 * @param startDate
+	 *            a valid local date
+	 * @param endDate
+	 *            a valid local date
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
+	 * 
+	 * @See <a href="https://fixer.io/documentation#fluctuation">Fluctuation
+	 *      Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
 	public List<Fluctuation> getFluctuations(LocalDate startDate, LocalDate endDate, String symbols)
+			throws FixerException, JsonParseException, IOException {
+		return getFluctuations(startDate, endDate, symbols, baseCurrency);
+	}
+
+	/**
+	 * Fluctuations of a currency between two dates. Returns the rate at beginning
+	 * and at end of the period plus the variation in value and in percentage
+	 * 
+	 * @param startDate
+	 *            a valid local date
+	 * @param endDate
+	 *            a valid local date
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
+	 * @param currency
+	 *            an alternate base currency
+	 * 
+	 * @See <a href="https://fixer.io/documentation#fluctuation">Fluctuation
+	 *      Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public List<Fluctuation> getFluctuations(LocalDate startDate, LocalDate endDate, String symbols, String currency)
 			throws FixerException, JsonParseException, IOException {
 
 		String strStartDate = null;
@@ -211,7 +316,12 @@ public class FixerApiLoader {
 			throw new FixerException("Invalid or null date");
 		}
 
-		return getFluctuations(strStartDate, strEndDate, symbols);
+		// Base Currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
+		}
+
+		return getFluctuations(strStartDate, strEndDate, symbols, currency);
 	}
 
 	/**
@@ -235,6 +345,37 @@ public class FixerApiLoader {
 	 */
 	public double getConversion(String fromCurrency, String targetCurrency, double amount)
 			throws FixerException, JsonParseException, IOException {
+		return getConversion(fromCurrency, targetCurrency, amount, baseCurrency);
+	}
+
+	/**
+	 * Convert an amount in a given currency into the target currency
+	 * 
+	 * @param fromCurrency
+	 *            is the currency for amount
+	 * @param targetCurrency
+	 *            is the target currency
+	 * @param amount
+	 *            a double that represents the initial value in the fromCurrency
+	 * @param currency
+	 *            an alternate base currency
+	 * 
+	 * @return the value in the targetCurrency
+	 * 
+	 * @See <a href="https://fixer.io/documentation#convertcurrency">Convert
+	 *      Endpoint documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public double getConversion(String fromCurrency, String targetCurrency, double amount, String currency)
+			throws FixerException, JsonParseException, IOException {
+
+		// Base Currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
+		}
 
 		Endpoint convertEndpoint = new ConvertEndpoint(baseUrl);
 		convertEndpoint.addParam("access_key", accessKey);
@@ -269,6 +410,8 @@ public class FixerApiLoader {
 	 * @param endDate
 	 *            the end date for which historical rates are requested in format
 	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
 	 * 
 	 * @return list of exchange rate
 	 * 
@@ -282,6 +425,35 @@ public class FixerApiLoader {
 	 */
 	public List<ExchangeRate> getTimeSeries(String startDate, String endDate, String symbols)
 			throws FixerException, JsonParseException, IOException {
+		return getTimeSeries(startDate, endDate, symbols, baseCurrency);
+	}
+
+	/**
+	 * Returns a list of exchange rates between two dates
+	 * 
+	 * @param startDate
+	 *            the start date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param endDate
+	 *            the end date for which historical rates are requested in format
+	 *            yyyy-MM-dd, eg: 2018-04-26
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
+	 * @param currency
+	 *            an alternate base currency
+	 * 
+	 * @return list of exchange rate
+	 * 
+	 * @See ExchangeRate
+	 * @See <a href="https://fixer.io/documentation#timeseries">Time-Series Endpoint
+	 *      documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public List<ExchangeRate> getTimeSeries(String startDate, String endDate, String symbols, String currency)
+			throws FixerException, JsonParseException, IOException {
 
 		// Check Dates
 		try {
@@ -294,11 +466,16 @@ public class FixerApiLoader {
 			throw new FixerException("Invalid or null date");
 		}
 
+		// Base currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
+		}
+
 		Endpoint timeSeriesEndpoint = new TimeSeriesEndpoint(baseUrl);
 		timeSeriesEndpoint.addParam("access_key", accessKey);
 		timeSeriesEndpoint.addParam("start_date", startDate);
 		timeSeriesEndpoint.addParam("end_date", endDate);
-		timeSeriesEndpoint.addParam("base", baseCurrency);
+		timeSeriesEndpoint.addParam("base", currency);
 
 		try {
 			EndpointFieldList data = timeSeriesEndpoint.getData();
@@ -314,7 +491,7 @@ public class FixerApiLoader {
 
 	public List<ExchangeRate> getTimeSeries(String startDate, String endDate)
 			throws FixerException, JsonParseException, IOException {
-		return getTimeSeries(startDate, endDate, null);
+		return getTimeSeries(startDate, endDate, null, baseCurrency);
 	}
 
 	/**
@@ -337,20 +514,8 @@ public class FixerApiLoader {
 	 */
 	public List<ExchangeRate> getTimeSeries(LocalDate startDate, LocalDate endDate)
 			throws FixerException, JsonParseException, IOException {
-		String strStartDate = null;
-		if (startDate != null) {
-			strStartDate = startDate.format(EndpointField.dateFormatter);
-		} else {
-			throw new FixerException("Invalid or null date");
-		}
 
-		String strEndDate = null;
-		if (endDate != null) {
-			strEndDate = endDate.format(EndpointField.dateFormatter);
-		} else {
-			throw new FixerException("Invalid or null date");
-		}
-		return getTimeSeries(strStartDate, strEndDate, null);
+		return getTimeSeries(startDate, endDate, null, baseCurrency);
 	}
 
 	/**
@@ -361,7 +526,7 @@ public class FixerApiLoader {
 	 * @param endDate
 	 *            a valid local date
 	 * @param symbols
-	 *            a list of symbols
+	 *            a comma separated string of 3-digits ISO currency codes
 	 * 
 	 * @return list of exchange rate
 	 * 
@@ -374,6 +539,33 @@ public class FixerApiLoader {
 	 * @throws IOException
 	 */
 	public List<ExchangeRate> getTimeSeries(LocalDate startDate, LocalDate endDate, String symbols)
+			throws FixerException, JsonParseException, IOException {
+		return getTimeSeries(startDate, endDate, symbols, baseCurrency);
+	}
+
+	/**
+	 * Returns a list of exchange rates between two dates
+	 * 
+	 * @param startDate
+	 *            a valid local date
+	 * @param endDate
+	 *            a valid local date
+	 * @param symbols
+	 *            a comma separated string of 3-digits ISO currency codes
+	 * @param currency
+	 *            an alternate base currency
+	 * 
+	 * @return list of exchange rate
+	 * 
+	 * @See ExchangeRate
+	 * @See <a href="https://fixer.io/documentation#timeseries">Time-Series Endpoint
+	 *      documentation</a>
+	 * 
+	 * @throws FixerException
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public List<ExchangeRate> getTimeSeries(LocalDate startDate, LocalDate endDate, String symbols, String currency)
 			throws FixerException, JsonParseException, IOException {
 
 		String strStartDate = null;
@@ -390,7 +582,12 @@ public class FixerApiLoader {
 			throw new FixerException("Invalid or null date");
 		}
 
-		return getTimeSeries(strStartDate, strEndDate, symbols);
+		// Base Currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
+		}
+
+		return getTimeSeries(strStartDate, strEndDate, symbols, currency);
 	}
 
 	/**
@@ -414,7 +611,7 @@ public class FixerApiLoader {
 	 * @throws IOException
 	 */
 	public List<ExchangeRate> getHistorical(String date) throws FixerException, JsonParseException, IOException {
-		return getHistorical(date, null, null);
+		return getHistorical(date, null, baseCurrency);
 	}
 
 	/**
@@ -441,7 +638,7 @@ public class FixerApiLoader {
 	 */
 	public List<ExchangeRate> getHistorical(String date, String symbols)
 			throws FixerException, JsonParseException, IOException {
-		return getHistorical(date, symbols, null);
+		return getHistorical(date, symbols, baseCurrency);
 	}
 
 	/**
@@ -526,7 +723,7 @@ public class FixerApiLoader {
 	 * @throws IOException
 	 */
 	public List<ExchangeRate> getHistorical(LocalDate date) throws FixerException, JsonParseException, IOException {
-		return getHistorical(date, null, null);
+		return getHistorical(date, null, baseCurrency);
 	}
 
 	/**
@@ -552,7 +749,7 @@ public class FixerApiLoader {
 	 */
 	public List<ExchangeRate> getHistorical(LocalDate date, List<String> symbols)
 			throws FixerException, JsonParseException, IOException {
-		return getHistorical(date, symbols, null);
+		return getHistorical(date, symbols, baseCurrency);
 	}
 
 	/**
@@ -590,6 +787,11 @@ public class FixerApiLoader {
 			strDate = date.format(EndpointField.dateFormatter);
 		} else {
 			throw new FixerException("Invalid or null date");
+		}
+
+		// Base Currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
 		}
 
 		return getHistorical(strDate, strSymbols, currency);
@@ -693,6 +895,11 @@ public class FixerApiLoader {
 	 */
 	public List<ExchangeRate> getLatest(String symbols, String currency)
 			throws FixerException, JsonParseException, IOException {
+
+		// Base Currency
+		if (StringUtils.isBlank(currency)) {
+			currency = baseCurrency;
+		}
 
 		LatestEndpoint latestEndpoint = new LatestEndpoint(baseUrl);
 		latestEndpoint.addParam("access_key", accessKey);
