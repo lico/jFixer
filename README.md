@@ -7,7 +7,8 @@ See https://fixer.io/ for documentation about this service
 See the wiki pages for usage guidelines:
 https://github.com/lico/jFixer/wiki
 
-
+Also, you can test the API using the jFixer-demo tool:
+https://www.upandcoding.com/jFixer
 
 ## Install
 You can compile the API in Maven.
