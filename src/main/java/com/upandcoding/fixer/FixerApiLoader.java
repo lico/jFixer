@@ -52,7 +52,7 @@ import com.upandcoding.fixer.model.Fluctuation;
  * Fixer API.
  * <p>
  * List<Currency> currencies = Currency.getSupportedcurrencies();
- * <p>
+ * <p> 
  * Not based on java.util.Currency because this latter comes with a pre-filled
  * list of available currencies. What we want here is to get the list of
  * currencies actually supported by the Fixer API.
