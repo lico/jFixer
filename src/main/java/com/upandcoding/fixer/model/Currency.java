@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author Lionel Conforto
  *
  */
-public final class Currency {
+public class Currency {
 
 	private static final Logger log = LoggerFactory.getLogger(Currency.class);
 
